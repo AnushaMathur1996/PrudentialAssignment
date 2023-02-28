@@ -1,14 +1,15 @@
-import react from "react";
+import react, { useRef } from "react";
 import { View, Text, Image, Dimensions, StyleSheet, TouchableOpacity } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { GestureHandlerRootView, TouchableWithoutFeedback } from "react-native-gesture-handler";
 import Carousel from 'react-native-reanimated-carousel';
 import { RFValue } from "react-native-responsive-fontsize";
 import { scale, verticalScale } from "react-native-size-matters";
 import { Colors, Fonts } from "../../../commonFiles/typography";
 
-const Cart = ({ setTotalAmount }) => {
+
+const Cart = ({ setTotalAmount, setOrder }) => {
     const width = Dimensions.get('window').width;
-    const height = Dimensions.get('window').height;
+    const height = verticalScale(250);
 
     const data = [
         { name: 'FRIES', price: 4, IMAGE: require('../../../assets/images/item3.png'), width: '200', height: '200' },
@@ -16,7 +17,7 @@ const Cart = ({ setTotalAmount }) => {
         { name: 'BURGER', price: 6, IMAGE: require('../../../assets/images/item1.png'), width: '170', height: '230' },
     ]
 
-    const RenderSingleItem = ({ item }) => {
+    const RenderSingleItem = ({ index, item }) => {
         const { IMAGE, name, price, height, width } = item
         return (
             <View style={styles.itemContainer}>
@@ -26,18 +27,19 @@ const Cart = ({ setTotalAmount }) => {
                     <Text style={styles.itemName}>{name}</Text>
                     <Text style={styles.itemPrice}>{price}$</Text>
 
-                    <TouchableOpacity onPress={() => setTotalAmount(price)}>
+                    <TouchableOpacity onPress={() => {
+                        setOrder(index)
+                        setTotalAmount(price)
+                    }}>
                         <Image source={require("../../../assets/images/addIcon.png")} style={styles.addIcon} />
                     </TouchableOpacity>
-
                 </View>
             </View>
         )
-
     }
 
     return (
-        <GestureHandlerRootView style={{ flex: 1 }}>
+        <GestureHandlerRootView style={{ flex: 1, marginTop: verticalScale(24) }}>
             <Carousel
                 loop
                 width={width}
@@ -45,9 +47,8 @@ const Cart = ({ setTotalAmount }) => {
                 data={data}
                 scrollAnimationDuration={1000}
                 snapEnabled={true}
-                onSnapToItem={(index) => console.log('current index:', index)}
-                renderItem={({ item }) => (
-                    <RenderSingleItem item={item} />
+                renderItem={({ index, item }) => (
+                    <RenderSingleItem item={item} index={index} />
                 )}
             />
         </GestureHandlerRootView>

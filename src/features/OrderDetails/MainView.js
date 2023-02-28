@@ -1,20 +1,20 @@
-import react, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import react, { useRef, useState } from "react";
+import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { scale, verticalScale, } from 'react-native-size-matters';
 import { Colors, Fonts } from "../../commonFiles/typography";
-import Amount from "../../assets/images/amount.svg"
 import Phone from "../../assets/images/phone.svg"
 import Location from "../../assets/images/location.svg"
 import { RFValue } from "react-native-responsive-fontsize";
 import { TopTabs } from "./components/header";
 import { Cart } from "./components/cart";
-
+import * as Animatable from 'react-native-animatable';
+import { ZoomInDown } from "react-native-reanimated";
 
 const OrderDetails = () => {
-
   const [totalAmount, setTotal] = useState(0)
-
+  const [selectedOrder, setSelectedOrder] = useState([])
+  const handleViewRef = useRef()
 
   const renderBottomSection = () => {
     return (
@@ -31,6 +31,26 @@ const OrderDetails = () => {
     )
   }
 
+  const renderSelectedItem = () => {
+    <Animatable.Text ref={this.handleTextRef}>Fade me!</Animatable.Text>
+    return (
+      <View>
+        <Image source={require("../../assets/images/foodTray.png")} style={styles.selectedItem} />
+        <View style={styles.selectedcontainer}>
+
+          {selectedOrder.includes(2) && <Animatable.Image animation={'zoomInDown'} ref={handleViewRef}
+            source={(require("../../assets/images/item1.png"))} style={styles.selectedFood} />}
+
+          {selectedOrder.includes(1) && <Animatable.Image animation={'zoomInDown'} ref={handleViewRef}
+            source={(require("../../assets/images/item2.png"))} style={[styles.selectedFood, { marginHorizontal: scale(0), bottom: 28 }]} />}
+
+          {selectedOrder.includes(0) && <Animatable.Image animation={'zoomInDown'} ref={handleViewRef}
+            source={(require("../../assets/images/item3.png"))} style={[styles.selectedFood, { marginHorizontal: scale(-44), }]} />}
+        </View>
+      </View>
+    )
+  }
+
   return (
     <LinearGradient
       start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
@@ -39,7 +59,13 @@ const OrderDetails = () => {
       <ScrollView scrollEnabled={false}>
 
         <TopTabs />
-        <Cart setTotalAmount={(total) => setTotal(totalAmount + total)} />
+        <Cart
+          setOrder={(order) => {
+            selectedOrder.push(order)
+            setSelectedOrder(selectedOrder)
+          }}
+          setTotalAmount={(total) => setTotal(totalAmount + total)} />
+        {renderSelectedItem()}
       </ScrollView>
 
       <View style={styles.contactDetailsContainer}>
@@ -94,6 +120,26 @@ var styles = StyleSheet.create({
     fontSize: RFValue(14),
     fontWeight: '600',
     marginHorizontal: scale(18)
+  },
+  selectedItem: {
+    width: scale(256),
+    height: verticalScale(100),
+    marginBottom: verticalScale(32),
+    alignSelf: "center",
+    position: 'relative'
+  },
+  selectedFood: {
+    width: scale(80),
+    height: verticalScale(80),
+    resizeMode: 'cover',
+    marginHorizontal: scale(-18)
+  },
+  selectedcontainer: {
+    position: "absolute",
+    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: "space-around",
+    alignSelf: "center",
   }
 
 });
