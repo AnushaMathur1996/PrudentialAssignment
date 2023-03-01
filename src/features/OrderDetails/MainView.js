@@ -9,7 +9,7 @@ import { RFValue } from "react-native-responsive-fontsize";
 import { TopTabs } from "./components/header";
 import { Cart } from "./components/cart";
 import * as Animatable from 'react-native-animatable';
-import { ZoomInDown } from "react-native-reanimated";
+
 
 const OrderDetails = () => {
   const [totalAmount, setTotal] = useState(0)
